@@ -9,9 +9,9 @@ const supabaseClient = supabase.createClient(
 
 let photos = [];
 
-async function loadPhotos() {
+async function load() {
   const { data, error } = await supabaseClient
-    .from("photos")
+    .from("Photos")
     .select("*")
     .eq("published", true)
     .order("date_taken", { ascending: false });
@@ -23,7 +23,7 @@ async function loadPhotos() {
 
   photos = data.map(photo => {
     const { data: imageData } = supabaseClient.storage
-      .from("photos")
+      .from("Photos")
       .getPublicUrl(photo.image_path);
 
     return {
