@@ -1,33 +1,49 @@
 // Temporary test data. Later this array can be replaced with records from Supabase.
-const photos = [
-  {
-    title: "Sheffield at Dusk",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=85",
-    description: "A quiet evening view as the light started to fade.",
-    date: "18 October 2026",
-    dateTime: "2026-10-18",
-    location: "Sheffield",
-    keywords: ["sheffield", "city", "evening", "dusk"]
-  },
-  {
-    title: "Across the Hills",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1400&q=85",
-    description: "One of those views that makes you stop for a minute.",
-    date: "4 October 2026",
-    dateTime: "2026-10-04",
-    location: "South Yorkshire",
-    keywords: ["hills", "landscape", "yorkshire", "countryside"]
-  },
-  {
-    title: "Autumn Walk",
-    image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1400&q=85",
-    description: "Autumn colour catching the last of the afternoon light.",
-    date: "27 September 2026",
-    dateTime: "2026-09-27",
-    location: "Yorkshire",
-    keywords: ["autumn", "trees", "woodland", "walk"]
+const SUPABASE_URL = "https://iqnkrsltsugajdbagezd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_i8wRq7NYkawDpc9lvRtxqQ_m7mkf6h_";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let photos = [];
+
+async function loadPhotos() {
+  const { data, error } = await supabaseClient
+    .from("photos")
+    .select("*")
+    .eq("published", true)
+    .order("date_taken", { ascending: false });
+
+  if (error) {
+    console.error("Error loading photos:", error);
+    return;
   }
-];
+
+  photos = data.map(photo => {
+    const { data: imageData } = supabaseClient.storage
+      .from("photos")
+      .getPublicUrl(photo.image_path);
+
+    return {
+      title: photo.title,
+      image: imageData.publicUrl,
+      description: photo.description,
+      date: photo.date_taken,
+      dateTime: photo.date_taken,
+      location: photo.location,
+      keywords: photo.keywords
+        ? photo.keywords.split(",").map(keyword => keyword.trim())
+        : []
+    };
+  });
+
+  matchingIndexes = photos.map((_, index) => index);
+  currentPhotoIndex = 0;
+
+  renderPhoto(false);
+}
 
 const elements = {
   polaroid: document.querySelector("#polaroid"),
@@ -124,4 +140,4 @@ document.addEventListener("keydown", event => {
   if (event.key === "ArrowRight") move(1);
 });
 
-renderPhoto(false);
+loadPhotos();
