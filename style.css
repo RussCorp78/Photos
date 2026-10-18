@@ -88,7 +88,7 @@ input {
   box-shadow: 0 0 0 3px rgba(109, 137, 164, 0.22);
 }
 
-.gallery {
+ .gallery {
   flex: 1;
   display: grid;
   grid-template-columns: 76px minmax(0, 1fr) 76px;
@@ -224,10 +224,12 @@ footer {
     width: 100%;
   }
 
+  
   .gallery {
-    grid-template-columns: 40px minmax(0, 1fr) 40px;
-    gap: 5px;
-  }
+  flex: 0;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  gap: 5px;
+}
 
   .arrow-button {
     width: 40px;
