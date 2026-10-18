@@ -113,10 +113,42 @@ function renderPhoto(animate = true) {
 function move(direction) {
   if (matchingIndexes.length === 0) return;
 
-  const position = Math.max(0, matchingIndexes.indexOf(currentPhotoIndex));
-  const nextPosition = (position + direction + matchingIndexes.length) % matchingIndexes.length;
-  currentPhotoIndex = matchingIndexes[nextPosition];
-  renderPhoto();
+  const flickClass = direction > 0 ? "flick-left" : "flick-right";
+  const arriveClass = direction > 0 ? "arrive-right" : "arrive-left";
+
+  elements.polaroid.classList.add(flickClass);
+
+  setTimeout(() => {
+    const position = Math.max(
+      0,
+      matchingIndexes.indexOf(currentPhotoIndex)
+    );
+
+    const nextPosition =
+      (position + direction + matchingIndexes.length) %
+      matchingIndexes.length;
+
+    currentPhotoIndex = matchingIndexes[nextPosition];
+
+    elements.polaroid.classList.remove(
+      "flick-left",
+      "flick-right",
+      "arrive-left",
+      "arrive-right"
+    );
+
+    renderPhoto(false);
+
+    // Force the browser to recognise the new animation
+    void elements.polaroid.offsetWidth;
+
+    elements.polaroid.classList.add(arriveClass);
+
+    setTimeout(() => {
+      elements.polaroid.classList.remove(arriveClass);
+    }, 320);
+
+  }, 260);
 }
 
 function searchPhotos() {
