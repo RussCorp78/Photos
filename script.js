@@ -9,7 +9,7 @@ const supabaseClient = supabase.createClient(
 
 let photos = [];
 
-async function load() {
+async function loadPhotos() {
   const { data, error } = await supabaseClient
     .from("Photos")
     .select("*")
